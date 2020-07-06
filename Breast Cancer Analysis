@@ -1,7 +1,7 @@
 ### This project primarily focusses on analyzing a given Breast Cancer dataset and then identifying based on certain parameters 
 if a given data qualifies for 'Malignant' or 'Benign' type. ###
 
-### The project is coded on Jupyter notebook. Here is the code: ###
+### The project is coded on Jupyter notebook. Alogrithm used: Logistic Regression. Here's the code: ###
 
 #Importing the data set
 
