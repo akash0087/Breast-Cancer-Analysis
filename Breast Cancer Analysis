@@ -1,0 +1,82 @@
+### This project primarily focusses on analyzing a given Breast Cancer dataset and then identifying based on certain parameters 
+if a given data qualifies for 'Malignant' or 'Benign' type. ###
+
+### The project is coded on Jupyter notebook. Here is the code: ###
+
+#Importing the data set
+
+import pandas as pd
+import numpy as np
+
+df = pd.read_csv(r'<Please update your directory where you've placed your dataset>')
+del df['id']
+df.head()
+
+print(df.shape) #To find the shape of the dataset
+
+print(df.diagnosis.value_counts()) #Just to see the count of cancer type
+df.describe() #To analyze what type of data we are dealing with i.e continuous or discrete
+
+
+#Creating dummy variable for categorical data (Diagnosis)
+df_new = pd.get_dummies(df,columns=['diagnosis'], prefix=['diagnosis'], drop_first=True)
+df_new.rename(columns= {'diagnosis_M':'diagnosis'}, inplace=True)
+df_new.head(5)
+
+df_new.isnull().sum() #To check if any characteristics have NULL values
+
+
+#Taking the predictor variable out of the data set
+X = df_new.drop('diagnosis',1) 
+y = df_new.diagnosis
+X.head()
+
+
+#Finding correlation between attributes
+df2 = X.corr()
+df2_corr_data = df2[df2 > 0.4] #Filtering out the correlated data whose value >0.4
+df2_corr_data.fillna(0, inplace=True) #Replacing NaN values with zeros
+df2_corr_data.replace(1,0, inplace=True) #Replacing 1 values with zero
+
+
+#Find all the columns where correlation is < 0.5
+col_corr = set()
+for i in range(len(df2_corr_data.columns)):
+    for j in range(i):
+        if ((df2_corr_data.iloc[i,j] < 0.5) and (df2_corr_data.columns[j] not in col_corr)):
+            colname = df2_corr_data.columns[i]
+            col_corr.add(colname)
+            
+print("Count of columns having correlation < 0.5 is: ", len(col_corr)," and coulmn names are: ", col_corr)
+
+
+#Remove columns where correlation is < 0.5 from dataframe
+for i in col_corr:
+    if (i in X.columns):
+        print("Droping Column: ", i)
+        X.drop([i], axis=1, inplace=True)
+    else:
+        continue
+        
+X.shape #To know the final dimentions of our dataset.
+
+print(X.shape) # 569x12
+print(y.shape) # 569x1
+
+
+#Split the dataset in 60:40 ratio
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=0)
+
+
+#Model Creation
+from sklearn.linear_model import LogisticRegression 
+from sklearn.metrics import accuracy_score
+
+LR = LogisticRegression()
+LR_model = LR.fit(X_train,y_train)
+
+LR_predict = LR_model.predict(X_test)
+
+print("Accuracy for LR model: ", (accuracy_score(y_test , LR_predict))*100)
+
