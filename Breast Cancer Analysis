@@ -6,7 +6,6 @@ if a given data qualifies for 'Malignant' or 'Benign' cancer type. ###
 #Importing the data set
 
 import pandas as pd
-import numpy as np
 
 df = pd.read_csv(r'<Please update your directory where you've placed your dataset>')
 del df['id']
