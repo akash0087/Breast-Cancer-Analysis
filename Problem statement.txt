@@ -1,0 +1,2 @@
+With the given dataset, 
+find if a particular entry qualifies for malignant(M) or Benign(B).
